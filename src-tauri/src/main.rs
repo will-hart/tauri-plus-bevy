@@ -26,7 +26,6 @@ fn main() {
             )))
             .insert_resource(CounterValue::default())
             .insert_resource(TauriBridge(tx_to_tauri, rx_from_tauri))
-            .insert_resource(CounterValue(0))
             .add_plugins(MinimalPlugins)
             .add_system(increment_counter)
             .add_system(send_counter)
