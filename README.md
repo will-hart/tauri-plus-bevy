@@ -7,6 +7,8 @@ guess it worked, but I'm not sure that's a good thing.
 If I stopped and thought about it for more than a few seconds I'd probably think
 of better ways to do this, but here it is anyway.
 
+I wrote up the process here https://willhart.io/post/headless-bevy-in-a-tauri-app/
+
 ## License
 
 Really? OK, I guess Apache/MIT?
