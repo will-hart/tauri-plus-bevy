@@ -34,6 +34,7 @@ fn main() {
     let context = tauri::generate_context!();
     tauri::Builder::default()
         .manage(BevyBridge(rx))
+        .invoke_handler(tauri::generate_handler![get_state])
         .menu(tauri::Menu::os_default(&context.package_info().name))
         .run(context)
         .expect("error while running tauri application");
@@ -50,3 +51,7 @@ fn send_counter(tauri_bridge: ResMut<TauriBridge>, counter: Res<CounterValue>) {
         .expect("Failed to send on channel");
 }
 
+#[tauri::command]
+fn get_state(state: tauri::State<BevyBridge>) -> u32 {
+    state.0.try_iter().last().unwrap_or(0)
+}
