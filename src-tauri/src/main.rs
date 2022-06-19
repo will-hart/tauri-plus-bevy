@@ -4,12 +4,11 @@
 )]
 
 use bevy::{app::ScheduleRunnerSettings, prelude::*, utils::Duration};
-use crossbeam_channel::{bounded, Receiver, Sender};
+use crossbeam_channel::{bounded, Sender};
 use std::thread;
+use tauri::Manager;
 
 struct TauriBridge(Sender<u32>);
-
-struct BevyBridge(Receiver<u32>);
 
 #[derive(Default)]
 struct CounterValue(u32);
@@ -33,8 +32,27 @@ fn main() {
 
     let context = tauri::generate_context!();
     tauri::Builder::default()
-        .manage(BevyBridge(rx))
         .menu(tauri::Menu::os_default(&context.package_info().name))
+        .setup(|app| {
+            let window = app.get_window("main").unwrap();
+
+            tauri::async_runtime::spawn(async move {
+                loop {
+                    match rx.try_iter().last() {
+                        Some(payload) => {
+                            window
+                                .emit("send_state", payload)
+                                .expect("Event should be sent");
+                        }
+                        _ => {}
+                    }
+
+                    thread::sleep(Duration::from_millis(50));
+                }
+            });
+
+            Ok(())
+        })
         .run(context)
         .expect("error while running tauri application");
 }
@@ -49,4 +67,3 @@ fn send_counter(tauri_bridge: ResMut<TauriBridge>, counter: Res<CounterValue>) {
         .send(counter.0)
         .expect("Failed to send on channel");
 }
-
