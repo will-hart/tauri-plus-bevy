@@ -1,3 +1,4 @@
+import { invoke } from "@tauri-apps/api";
 import { listen, UnlistenFn } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
 import "./App.css";
@@ -21,6 +22,13 @@ function App() {
       <header className="App-header">
         <p>Hello Tauri + Bevy!</p>
         <p>The count is: {count}</p>
+        <button
+          onClick={() => {
+            invoke("reset_counter");
+          }}
+        >
+          Reset
+        </button>
       </header>
     </div>
   );
